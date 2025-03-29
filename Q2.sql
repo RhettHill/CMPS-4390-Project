@@ -146,7 +146,7 @@ $$ LANGUAGE plpgsql;
 
 
 CREATE TRIGGER check_overdue_fine
-AFTER UPDATE ON Transaction
+AFTER INSERT OR UPDATE ON Transaction
 FOR EACH ROW
 WHEN (NEW.return_date IS NOT NULL AND NEW.return_date > NEW.due_date)
 EXECUTE FUNCTION apply_fine_if_overdue();
