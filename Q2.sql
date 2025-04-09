@@ -30,9 +30,9 @@ WHERE transaction_id = 'T34'
 Delete from Transaction WHERE transaction_id = 'T34'
 
 --QM5: QUERY DATA WITH WHERE CLAUSE:
-----Description: Returns all transactions where the book is either late or not returned
-SELECT *
-FROM Transaction
+----Description: Returns Books that were either returned late or not returned
+SELECT b.id, b.title, t.due_date, t.return_date
+FROM book b JOIN transaction t on b.book_id=t.book_id
 WHERE (return_date is null ) OR
 ( NOT (return_date is  null) AND
 (return_date - due_date >0)
@@ -65,7 +65,7 @@ SELECT
         SELECT f.amount
         FROM Fine f
         WHERE f.transaction_id = t.transaction_id
-    ) AS fine_amount
+    )
 FROM Transaction t
 WHERE t.return_date IS NOT NULL;
 
@@ -74,29 +74,26 @@ WHERE t.return_date IS NOT NULL;
 
 SELECT member_id
 FROM Member
-
-EXCEPT
-
+EXCEPT(
 SELECT member_id
-FROM Transaction
-WHERE member_id IS NOT NULL;
+FROM Transaction);
 
 --QM8.1: QUERY DATA WITH ANY/SOME:
--- Description: Show all fines with amount smaller than the largest fine
+-- Description: Show all members who have made a transaction
 
-SELECT *
-FROM Fine
-WHERE amount < ANY (
-    SELECT amount
-    FROM Fine
+SELECT first_name,last_name
+FROM Member
+WHERE member_id = ANY (
+    SELECT member_id
+    FROM Transaction
 );
 
 
 --QM8.2: QUERY DATA WITH ALL in front of a sub-query:
--- Description: Returns fines with the highest amount
+-- Description: Returns the transaction with the highest fine amount
 
-SELECT *
-FROM Fine
+SELECT book_id, member_id, checkout_date, due_date, return_date, amount, is_payed
+FROM Transaction t JOIN fine f ON t.transaction_id = f.transaction_id
 WHERE amount >= ALL (
     SELECT amount
     FROM Fine
