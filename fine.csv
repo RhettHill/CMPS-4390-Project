@@ -1,0 +1,5 @@
+fine_id,transaction_id,amount,is_payed
+F1,T15,7.18,Yes
+F2,T23,13.4,No
+F3,T28,15.33,No
+F4,T30,8.82,No
