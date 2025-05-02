@@ -51,14 +51,8 @@ Instructions:
 */
 ----Description: Alters the fk constraint for the book-author relation .....................
 
-ALTER TABLE Book
-ALTER COLUMN author_id SET DEFAULT NULL;
-
-ALTER TABLE Book 
-ADD CONSTRAINT fk_author 
-    FOREIGN KEY (author_id)
-    REFERENCES Author(author_id)
-    ON DELETE SET NULL;
+ALTER TABLE Book ADD CONSTRAINT fk_author FOREIGN KEY (author_id)
+REFERENCES Author(author_id) ON DELETE SET NULL;
 
 
 --QD5: Create TRIGGER ...
@@ -75,19 +69,13 @@ BEGIN
         -- Calculate overdue days
         overdue_days := NEW.return_date - NEW.due_date;
         fine_amount := overdue_days * 0.50;
-        
-        -- Check if a fine already exists for this transaction_id
-        IF NOT EXISTS (SELECT 1 FROM Fine WHERE transaction_id = NEW.transaction_id) THEN
-            -- Insert a new fine only if the transaction_id does not exist
-            INSERT INTO Fine (fine_id, transaction_id, amount, is_payed)
-            VALUES ('F' || nextval('fine_seq'), NEW.transaction_id, fine_amount, FALSE);
-        END IF;
+        INSERT INTO Fine (fine_id, transaction_id, amount, is_payed)
+        VALUES ('F' || nextval('fine_seq'), NEW.transaction_id, fine_amount, FALSE);
     END IF;
 
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
-
 
 
 
